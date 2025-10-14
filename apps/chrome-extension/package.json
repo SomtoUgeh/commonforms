@@ -8,8 +8,6 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "bunx ultracite check && tsc --noEmit",
-    "format": "bunx ultracite fix",
-    "format:check": "bunx ultracite check",
     "test": "echo \"TODO: add tests\"",
     "clean": "rm -rf dist node_modules"
   },

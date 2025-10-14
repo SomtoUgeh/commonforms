@@ -101,8 +101,16 @@ pre-commit run --hook-stage push --all-files
 ```
 
 ### Configuration
-- **Root config**: `biome.jsonc` extends `ultracite` preset
-- **Customizations**: Chrome extension globals (`chrome`), console warnings
+
+**Monorepo setup** (follows Ultracite best practices):
+- **Single root config**: `biome.jsonc` extends `ultracite` preset (applies to entire monorepo)
+- **Root-level scripts only**: `bun run format` / `format:check` run on all files (Biome is fast enough)
+- **No per-package scripts**: Workspace packages don't need their own format scripts
+- **Turborepo integration**: Optional `//#format` tasks for Turborepo orchestration
+
+**Customizations**:
+- Chrome extension globals (`chrome`)
+- Console warnings instead of errors
 
 ### Key Features
 - 300+ preconfigured rules (opinionated but customizable)

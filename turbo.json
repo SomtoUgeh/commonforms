@@ -11,12 +11,10 @@
       "cache": false,
       "persistent": true
     },
-    "format": {
-      "dependsOn": ["^format"],
-      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc"]
+    "//#format": {
+      "cache": false
     },
-    "format:check": {
-      "dependsOn": ["^format:check"],
+    "//#format:check": {
       "inputs": ["$TURBO_DEFAULT$", "biome.jsonc"]
     },
     "lint": {
