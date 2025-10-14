@@ -1,24 +1,34 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `commonforms/` houses the pip package and CLI entry point (`__main__.py`), with `inference.py` wrapping YOLO detectors and `form_creator.py` handling output PDFs. Model weights live under `commonforms/models/` and load dynamically based on CLI flags.
-- `tests/` contains pytest suites; `tests/inference_test.py` exercises the public API and CLI, relying on PDFs in `tests/resources/`.
-- `assets/` stores documentation images referenced in the README. Packaging metadata lives in `pyproject.toml` (Python 3.11+).
+- `commonforms/` hosts the pip package and CLI entry point `__main__.py`; detectors live in `inference.py` and PDF writing in `form_creator.py`.
+- YOLO weights reside under `commonforms/models/` and load dynamically according to CLI flags.
+- Tests sit in `tests/`, with CLI and API coverage in `tests/inference_test.py` and fixtures under `tests/resources/`.
+- Documentation assets live in `assets/`, while packaging and metadata are defined in `pyproject.toml`.
 
 ## Build, Test, and Development Commands
-- `uv pip install -e .[dev]` (or `pip install -e .[dev]`) installs the package with lint and test deps.
-- `pytest` runs the test suite; use `pytest tests/test_module.py::test_case` when narrowing failures.
-- `ruff check commonforms tests` enforces formatting and linting; run `ruff --fix` for minor tidy-ups.
-- `commonforms ./tests/resources/input.pdf ./tmp/output.pdf` or `python -m commonforms ...` performs an end-to-end smoke check.
+- `uv pip install -e .[dev]` (or `pip install -e .[dev]`) installs the package plus lint/test tooling.
+- `pytest` runs the full suite; call `pytest tests/test_module.py::test_case` to target a single test.
+- `ruff check commonforms tests` enforces linting; run `ruff --fix` for autofixes when appropriate.
+- `commonforms ./tests/resources/input.pdf ./tmp/output.pdf` verifies end-to-end generation; create `tmp/` locally for throwaway artifacts.
 
 ## Coding Style & Naming Conventions
-Use 4-space indentation, type-annotated functions, and snake_case module and function names to match existing modules. Keep public helpers documented with concise docstrings (see `commonforms.inference.FFDNetDetector`). Prefer descriptive exceptions in `commonforms/exceptions.py`, and keep CLI options mirrored between `__main__.py` and the API.
+- Follow 4-space indentation, full type hints, and snake_case modules/functions to mirror existing code.
+- Keep public helpers documented; model new docstrings on `commonforms.inference.FFDNetDetector`.
+- Prefer expressive exceptions declared in `commonforms/exceptions.py`.
+- Run `ruff` before committing; keep generated files out of version control.
 
 ## Testing Guidelines
-Add pytest cases under `tests/`, naming files `*_test.py` and tests `test_*`. Reuse fixtures such as `tmp_path` for generated PDFs and store new assets under `tests/resources/`. Cover both standard and `--fast` execution paths when touching inference or model-loading logic; ensure encrypted inputs raise `EncryptedPdfError`. Run `pytest -q` before opening a PR.
+- Use `pytest` with tests named `test_*` in files ending `_test.py`.
+- Rely on fixtures such as `tmp_path` for temporary PDFs and reuse `tests/resources/` inputs where feasible.
+- Cover both default and `--fast` inference paths; encrypted inputs must raise `EncryptedPdfError`.
+- Run `pytest -q` locally prior to opening a PR and add new resources under `tests/resources/`.
 
 ## Commit & Pull Request Guidelines
-Commits should be concise, sentence-case summaries in the imperative (e.g., `Catch encrypted PDFs`). Reference issues with `#<id>` when applicable. PRs must describe the motivation, outline solution changes, note impacts on inference speed or accuracy, and confirm tests/lint have run. Include sample CLI output or updated screenshots if behavior changes the generated PDFs.
+- Craft concise, imperative commit messages (e.g., `Catch encrypted PDFs`); reference issues with `#<id>` when relevant.
+- PRs should explain motivation, summarize changes, call out inference performance impacts, and confirm lint/tests.
+- Attach CLI output or refreshed screenshots when behavior alters generated PDFs; note any follow-up tasks or TODOs.
 
 ## Model & Asset Handling
-Large weight files already ship in `commonforms/models/`; avoid committing new binaries without discussing alternatives (external hosting or lazy download). Keep generated PDFs out of version control—store them in `tmp/` or reference paths in the PR instead.
+- Avoid committing new binaries; discuss large weights before adding them and prefer lazy downloads when possible.
+- Keep generated PDFs in `tmp/` or ignore them via `.gitignore`; only ship documentation assets that the README references.
