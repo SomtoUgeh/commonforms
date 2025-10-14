@@ -73,12 +73,32 @@ bun run validate
 3. Settings configured in `.vscode/settings.json`
 
 ### Git Hooks (Automated Quality Checks)
-- **Pre-commit** (`.husky/pre-commit`): Auto-formats staged files (~1-2s)
-- **Pre-push** (`.husky/pre-push`): Full validation before push (~10-20s)
-  - Format check
+
+**Setup** (one-time):
+```bash
+# Install pre-commit framework globally
+uv tool install pre-commit
+
+# Install git hooks
+pre-commit install --install-hooks
+pre-commit install --hook-type pre-push
+```
+
+**Hooks configuration** (`.pre-commit-config.yaml`):
+- **Pre-commit**: Auto-format Python (Ruff) + TypeScript (Ultracite) on staged files (~1-2s)
+- **Pre-push**: Full validation before push (~10-20s)
   - TypeScript type checking
   - Build verification
 - **CI**: Final validation on GitHub Actions (all checks + tests)
+
+**Manual run**:
+```bash
+# Run all pre-commit hooks manually
+pre-commit run --all-files
+
+# Run only pre-push hooks
+pre-commit run --hook-stage push --all-files
+```
 
 ### Configuration
 - **Root config**: `biome.jsonc` extends `ultracite` preset
@@ -97,6 +117,11 @@ bun run validate
 # Install all dependencies (JS + Python)
 bun install     # Installs Turborepo and JS deps
 uv sync         # Resolves Python workspace deps
+
+# Install pre-commit framework for git hooks (one-time)
+uv tool install pre-commit
+pre-commit install --install-hooks
+pre-commit install --hook-type pre-push
 
 # Build all packages
 bun run build   # Runs Turborepo tasks
