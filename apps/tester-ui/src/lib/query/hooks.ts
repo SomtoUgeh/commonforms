@@ -20,11 +20,10 @@ export function useCreateJob() {
       options?: JobOptions;
       baseUrl?: string;
     }) => createJob(file, options, baseUrl),
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate job list queries
       queryClient.invalidateQueries({ queryKey: jobKeys.lists() });
-      // Set initial job status in cache
-      queryClient.setQueryData(jobKeys.status(data.job_id), data);
+      // Don't set initial cache - let useJobStatus fetch fresh data
     },
   });
 }

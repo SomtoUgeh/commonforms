@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JobCard } from "@/components/JobCard";
 import { useJobStatus } from "@/lib/query/hooks";
 import { useHistory } from "@/lib/store/history";
@@ -48,12 +48,12 @@ function JobMonitor({
   const { data: job } = useJobStatus(jobId, backendUrl);
 
   // Add to history when job completes
-  useState(() => {
+  useEffect(() => {
     if (job && (job.status === "ready" || job.status === "failed")) {
       const duration = Date.now() - startTime;
       addJob(job, duration);
     }
-  });
+  }, [job, startTime, addJob]);
 
   if (!job) {
     return null;

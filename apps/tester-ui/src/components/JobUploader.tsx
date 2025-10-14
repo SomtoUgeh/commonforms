@@ -53,7 +53,7 @@ export function JobUploader({ onJobCreated }: JobUploaderProps) {
     }
 
     const options: JobOptions = {
-      model,
+      model_or_path: model,
       fast,
     };
 
