@@ -1,0 +1,55 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { POLL_INTERVAL_MS } from "@/constants/api";
+import { createJob, getJobStatus } from "../api/client";
+import type { JobOptions } from "../api/schemas";
+import { jobKeys } from "./keys";
+
+/**
+ * Hook for uploading a PDF and creating a job
+ */
+export function useCreateJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      file,
+      options,
+      baseUrl,
+    }: {
+      file: File;
+      options?: JobOptions;
+      baseUrl?: string;
+    }) => createJob(file, options, baseUrl),
+    onSuccess: (data) => {
+      // Invalidate job list queries
+      queryClient.invalidateQueries({ queryKey: jobKeys.lists() });
+      // Set initial job status in cache
+      queryClient.setQueryData(jobKeys.status(data.job_id), data);
+    },
+  });
+}
+
+/**
+ * Hook for polling job status
+ * Automatically stops polling when job reaches terminal state
+ */
+export function useJobStatus(jobId: string | null, baseUrl?: string) {
+  return useQuery({
+    queryKey: jobKeys.status(jobId || ""),
+    queryFn: () => {
+      if (!jobId) {
+        throw new Error("Job ID is required");
+      }
+      return getJobStatus(jobId, baseUrl);
+    },
+    enabled: !!jobId,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      // Stop polling on terminal states
+      if (status === "ready" || status === "failed") {
+        return false;
+      }
+      return POLL_INTERVAL_MS;
+    },
+  });
+}

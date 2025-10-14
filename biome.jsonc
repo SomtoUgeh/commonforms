@@ -7,10 +7,14 @@
   "linter": {
     "rules": {
       "suspicious": {
-        "noConsole": "warn"
+        "noConsole": "warn",
+        "noUnknownAtRules": "off"
       },
       "style": {
         "useFilenamingConvention": "off"
+      },
+      "performance": {
+        "noImgElement": "off"
       }
     }
   }
