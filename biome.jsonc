@@ -11,10 +11,13 @@
         "noUnknownAtRules": "off"
       },
       "style": {
-        "useFilenamingConvention": "off"
+        "useFilenamingConvention": "off",
+        "useDefaultSwitchClause": "off",
+        "useCollapsedIf": "off"
       },
       "performance": {
-        "noImgElement": "off"
+        "noImgElement": "off",
+        "noNamespaceImport": "off"
       }
     }
   }
