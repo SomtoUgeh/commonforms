@@ -1,37 +1,8 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+[tool.uv.workspace]
+members = ["packages/*", "apps/inference-api"]
 
-[project]
-name = "commonforms"
-version = "0.1.4"
-description = "Automatically convert a PDF into a fillable form"
-readme = "README.md"
-requires-python = ">=3.11"
-urls = { Homepage = "https://github.com/jbarrow/commonforms" }
-dependencies = [
-    "cryptography>=3.1",
-    "formalpdf==0.1.5",
-    "onnx>=1.19.1",
-    "onnxruntime>=1.23.1",
-    "onnxslim>=0.1.71",
-    "pillow>=11.3.0",
-    "pydantic>=2.11.9",
-    "pypdf>=6.1.1",
-    "ultralytics>=8.3.204",
-]
-
-[project.scripts]
-commonforms = "commonforms:main"
-
-[tool.setuptools]
-packages = ["commonforms"]
-
-[tool.setuptools.package-data]
-commonforms = ["models/*.pt"]
-
-[dependency-groups]
-dev = [
+[tool.uv]
+dev-dependencies = [
     "pytest>=8.4.2",
     "ruff>=0.14.0",
 ]

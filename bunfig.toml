@@ -1,0 +1,6 @@
+[install]
+linkWorkspacePackages = true
+exact = true
+
+[install.cache]
+# Use bun's default cache location

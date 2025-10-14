@@ -1,8 +1,33 @@
-.python-version
+# Node/Bun
+node_modules/
 .DS_Store
+bun.lockb
+.turbo/
+
+# Python
+.python-version
+.venv/
 *.pyc
-__pycache__
+__pycache__/
 *.egg-info
 uv.lock
+.pytest_cache/
+
+# Build outputs
+dist/
+build/
+out/
+.jobs/
+
+# PDFs (except test resources and docs)
 *.pdf
-dist
+!tests/resources/*.pdf
+!docs/epa.pdf
+
+# Inference API artifacts
+apps/inference-api/.jobs/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
