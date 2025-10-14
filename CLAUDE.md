@@ -54,11 +54,14 @@ commonforms/
 
 ### Commands
 ```bash
-# Auto-fix formatting and lint issues
+# Auto-fix formatting and lint issues (safe fixes only)
 bun run format
 
 # Check without fixing
 bun run format:check
+
+# Apply unsafe fixes (manual use only - may change code behavior)
+bun run format:unsafe
 
 # Full lint (format check + typecheck)
 bun run lint
@@ -66,6 +69,11 @@ bun run lint
 # Run all validation checks (format + typecheck + build)
 bun run validate
 ```
+
+**Safe vs Unsafe Fixes:**
+- **Safe** (`bun run format`): Guaranteed to preserve code behavior - used in automation
+- **Unsafe** (`bun run format:unsafe`): May change code semantics - use manually with caution
+- Automation (pre-commit, CI) uses safe-only to prevent unexpected behavior changes
 
 ### Editor Setup
 1. Install Biome VS Code extension: `code --install-extension biomejs.biome`

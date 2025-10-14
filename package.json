@@ -14,6 +14,7 @@
     "lint": "turbo run lint",
     "format": "bunx ultracite fix",
     "format:check": "bunx ultracite check",
+    "format:unsafe": "bunx ultracite fix --unsafe",
     "typecheck": "turbo run lint",
     "test": "turbo run test",
     "clean": "turbo run clean",
