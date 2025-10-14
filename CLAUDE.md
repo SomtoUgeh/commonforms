@@ -62,6 +62,9 @@ bun run format:check
 
 # Full lint (format check + typecheck)
 bun run lint
+
+# Run all validation checks (format + typecheck + build)
+bun run validate
 ```
 
 ### Editor Setup
@@ -69,10 +72,17 @@ bun run lint
 2. Extension provides format-on-save and auto-organize imports
 3. Settings configured in `.vscode/settings.json`
 
+### Git Hooks (Automated Quality Checks)
+- **Pre-commit** (`.husky/pre-commit`): Auto-formats staged files (~1-2s)
+- **Pre-push** (`.husky/pre-push`): Full validation before push (~10-20s)
+  - Format check
+  - TypeScript type checking
+  - Build verification
+- **CI**: Final validation on GitHub Actions (all checks + tests)
+
 ### Configuration
 - **Root config**: `biome.jsonc` extends `ultracite` preset
 - **Customizations**: Chrome extension globals (`chrome`), console warnings
-- **Pre-commit**: Husky runs `bunx ultracite fix` on staged files
 
 ### Key Features
 - 300+ preconfigured rules (opinionated but customizable)

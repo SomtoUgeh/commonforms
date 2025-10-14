@@ -16,7 +16,8 @@
     "format:check": "bunx ultracite check",
     "typecheck": "turbo run lint",
     "test": "turbo run test",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "validate": "bun run format:check && bun run typecheck && bun run build"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",

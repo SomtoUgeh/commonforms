@@ -1,0 +1,21 @@
+#!/bin/sh
+# Exit on any error
+set -e
+
+echo "🔍 Running pre-push checks..."
+
+# 1. Format check (fast)
+echo "  → Checking code formatting..."
+bun run format:check
+
+# 2. Type check (medium speed)
+echo "  → Type checking TypeScript..."
+cd apps/chrome-extension && bunx tsc --noEmit
+cd ../..
+
+# 3. Build check (ensures no build-time errors)
+echo "  → Building Chrome extension..."
+cd apps/chrome-extension && bun run build > /dev/null 2>&1
+cd ../..
+
+echo "✅ All pre-push checks passed!"
