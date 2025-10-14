@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.local", ".env.production"],
+      "outputs": ["dist/**", "build/**", "out/**", ".next/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "//#format": {
+      "cache": false
+    },
+    "//#format:check": {
+      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc", "tsconfig*.json"]
+    },
+    "lint:python": {
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["coverage/**"]
+    },
+    "test:python": {
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

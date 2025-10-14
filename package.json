@@ -1,0 +1,31 @@
+{
+  "name": "commonforms-monorepo",
+  "version": "0.1.4",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.3.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "bunx ultracite fix",
+    "format:check": "bunx ultracite check",
+    "format:unsafe": "bunx ultracite fix --unsafe",
+    "typecheck": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "validate": "bun run format:check && bun run typecheck && bun run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.5",
+    "turbo": "^2.5.8",
+    "ultracite": "5.6.2"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

@@ -1,0 +1,13 @@
+[install]
+# Use isolated linker for strict dependency isolation (Bun 1.3 default for workspaces)
+# Prevents packages from accessing undeclared dependencies
+linker = "isolated"
+
+# Link workspace packages instead of copying
+linkWorkspacePackages = true
+
+# Use exact versions from lockfile
+exact = true
+
+[install.cache]
+# Use bun's default cache location
