@@ -253,3 +253,31 @@ commonforms input.pdf output.pdf --fast
 - Tests verify both standard and fast (ONNX) inference modes
 - Tests should be run from packages/commonforms-core/ directory: `cd packages/commonforms-core && python -m pytest`
 - Critical test: EPA.pdf processing should detect ~288 textboxes and ~43 choice buttons
+
+## Running the backend
+
+1. **Install dependencies** (from repo root, once per environment):
+   ```bash
+   uv pip install -e apps/inference-api[dev]
+   ```
+   The `commonforms-core` package is pulled in via the workspace link, ensuring the FastAPI app can import the core pipeline.
+
+2. **Launch the server** (repo root):
+   ```bash
+   COMMONFORMS_FAST_MODE=true uvicorn app.main:app --app-dir apps/inference-api --reload
+   ```
+   **Recommended**: Use `FAST_MODE=true` for 15x faster inference with better detection quality (ONNX vs PyTorch).
+
+   Optional env vars (prefixed `COMMONFORMS_`) override defaults:
+   - `FAST_MODE` (default: `false`, recommended: `true`) - Use ONNX for faster CPU inference
+   - `MAX_UPLOAD_MB`, `MAX_CONCURRENT_JOBS`, `QUEUE_SIZE`
+   - `DEFAULT_MODEL`, `DEVICE`, `CONFIDENCE`, `IMAGE_SIZE`
+   - `KEEP_EXISTING_FIELDS`, `USE_SIGNATURE_FIELDS`
+   - `JOB_STORAGE_DIR`, `CLEANUP_TTL_SECONDS`, `BASE_DOWNLOAD_URL`
+
+3. **Endpoints** (base URL `http://127.0.0.1:8000`):
+   - `POST /jobs`: multipart upload with `file` (PDF) and optional `options` JSON matching `PrepareOptions`; returns `202` with `{job_id,status:"queued",progress:0.0}`.
+   - `GET /jobs/{job_id}`: poll for job state `{status,progress,message?,error?,download_url?}` until status reaches `ready` or `failed`.
+   - `GET /jobs/{job_id}/result`: when status is `ready`, streams the generated fillable PDF (`application/pdf`); before completion responds `404`, after cleanup `410`.
+
+4. **Docs & testing**: interactive Swagger UI at `/docs`; run automated checks with `pytest apps/inference-api/tests` (requires the dev extras above).
