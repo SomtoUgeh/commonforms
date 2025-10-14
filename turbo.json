@@ -4,25 +4,24 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env",
-        ".env.local",
-        ".env.production"
-      ],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.local", ".env.production"],
       "outputs": ["dist/**", "build/**", "out/**", ".next/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
+    "format": {
+      "dependsOn": ["^format"],
+      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc"]
+    },
+    "format:check": {
+      "dependsOn": ["^format:check"],
+      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc"]
+    },
     "lint": {
       "dependsOn": ["^lint"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".eslintrc*",
-        "tsconfig*.json"
-      ]
+      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc", "tsconfig*.json"]
     },
     "lint:python": {
       "cache": false

@@ -45,7 +45,40 @@ commonforms/
 - **JS/TS**: Bun 1.3, Turborepo 2.5.8, Vite 7.1.9, React 18.3.1, TypeScript 5.7.2
 - **Python**: uv workspaces, FastAPI 0.115.6+, Uvicorn 0.34.0+
 - **Chrome Extension**: @crxjs/vite-plugin 2.0.0-beta.25 (Vite 7 compatible)
+- **Linting/Formatting**: Ultracite 5.6.2 + Biome 2.2.5 (TypeScript/JavaScript)
 - **Requirements**: Node.js 20.19+ or 22.12+ (for Vite 7)
+
+## TypeScript/JavaScript Linting & Formatting
+
+**Ultracite** - Zero-config linting and formatting built on Biome (Rust-based, 10-100x faster than ESLint)
+
+### Commands
+```bash
+# Auto-fix formatting and lint issues
+bun run format
+
+# Check without fixing
+bun run format:check
+
+# Full lint (format check + typecheck)
+bun run lint
+```
+
+### Editor Setup
+1. Install Biome VS Code extension: `code --install-extension biomejs.biome`
+2. Extension provides format-on-save and auto-organize imports
+3. Settings configured in `.vscode/settings.json`
+
+### Configuration
+- **Root config**: `biome.jsonc` extends `ultracite` preset
+- **Customizations**: Chrome extension globals (`chrome`), console warnings
+- **Pre-commit**: Husky runs `bunx ultracite fix` on staged files
+
+### Key Features
+- 300+ preconfigured rules (opinionated but customizable)
+- AI-ready code consistency
+- Monorepo-native (single config for entire workspace)
+- Lightning-fast performance (Rust-based)
 
 ## Development Commands
 

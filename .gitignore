@@ -29,5 +29,4 @@ apps/inference-api/.jobs/
 
 # IDEs
 .idea/
-.vscode/
 *.swp
