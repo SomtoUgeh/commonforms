@@ -10,7 +10,6 @@ bun.lockb
 *.pyc
 __pycache__/
 *.egg-info
-uv.lock
 .pytest_cache/
 
 # Build outputs
