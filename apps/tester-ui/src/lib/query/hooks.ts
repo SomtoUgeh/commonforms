@@ -43,9 +43,9 @@ export function useJobStatus(jobId: string | null, baseUrl?: string) {
     },
     enabled: !!jobId,
     refetchInterval: (query) => {
-      const status = query.state.data?.status;
+      const data = query.state.data;
       // Stop polling on terminal states
-      if (status === "ready" || status === "failed") {
+      if (data?.status === "ready" || data?.status === "failed") {
         return false;
       }
       return POLL_INTERVAL_MS;

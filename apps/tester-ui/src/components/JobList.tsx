@@ -45,7 +45,7 @@ function JobMonitor({
   const { addJob } = useHistory();
   const [startTime] = useState(Date.now());
 
-  const { data: job } = useJobStatus(jobId, backendUrl);
+  const { data: job, isLoading } = useJobStatus(jobId, backendUrl);
 
   // Add to history when job completes
   useEffect(() => {
@@ -55,8 +55,14 @@ function JobMonitor({
     }
   }, [job, startTime, addJob]);
 
-  if (!job) {
-    return null;
+  // Show loading state while fetching initial data
+  if (isLoading || !job) {
+    return (
+      <div className="rounded-lg border border-dashed p-8 text-center">
+        <p className="text-muted-foreground text-sm">Loading job status...</p>
+        <p className="font-mono text-muted-foreground text-xs">{jobId}</p>
+      </div>
+    );
   }
 
   return <JobCard job={job} onRemove={onRemove} />;
