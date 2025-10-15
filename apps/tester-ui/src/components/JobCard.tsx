@@ -67,7 +67,9 @@ export function JobCard({ job, onRemove }: JobCardProps) {
             <p className="font-medium text-destructive text-sm">
               {job.error.type}
             </p>
-            <p className="text-destructive/80 text-sm">{job.error.detail}</p>
+            {job.error.detail && (
+              <p className="text-destructive/80 text-sm">{job.error.detail}</p>
+            )}
           </div>
         )}
 

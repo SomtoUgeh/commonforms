@@ -41,11 +41,16 @@ function JobMonitor({
   jobId: string;
   onRemove: () => void;
 }) {
-  const { backendUrl } = useSettings();
+  const { backendUrl, pollInterval } = useSettings();
   const { addJob } = useHistory();
   const [startTime] = useState(Date.now());
 
-  const { data: job, isLoading } = useJobStatus(jobId, backendUrl);
+  const {
+    data: job,
+    isPending,
+    isError,
+    error,
+  } = useJobStatus(jobId, backendUrl, pollInterval);
 
   // Add to history when job completes
   useEffect(() => {
@@ -55,8 +60,28 @@ function JobMonitor({
     }
   }, [job, startTime, addJob]);
 
-  // Show loading state while fetching initial data
-  if (isLoading || !job) {
+  if (!job) {
+    if (isPending) {
+      return (
+        <div className="rounded-lg border border-dashed p-8 text-center">
+          <p className="text-muted-foreground text-sm">Loading job status...</p>
+          <p className="font-mono text-muted-foreground text-xs">{jobId}</p>
+        </div>
+      );
+    }
+
+    if (isError) {
+      return (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-8 text-center">
+          <p className="text-destructive text-sm">
+            Failed to load job status.{" "}
+            {error instanceof Error ? error.message : "Unknown error"}
+          </p>
+          <p className="font-mono text-destructive/80 text-xs">{jobId}</p>
+        </div>
+      );
+    }
+
     return (
       <div className="rounded-lg border border-dashed p-8 text-center">
         <p className="text-muted-foreground text-sm">Loading job status...</p>

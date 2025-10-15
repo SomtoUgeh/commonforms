@@ -59,8 +59,6 @@ class Job:
     ) -> None:
         if status is not None:
             self.status = status
-            if progress is None:
-                progress = STAGE_PROGRESS.get(status, self.progress)
         if progress is not None:
             self.progress = max(0.0, min(progress, 1.0))
         if message is not None:
@@ -68,7 +66,7 @@ class Job:
         self.updated_at = datetime.utcnow()
 
     def mark_stage(self, stage: JobStatus, message: str | None = None) -> None:
-        self.update(status=stage, progress=STAGE_PROGRESS.get(stage), message=message)
+        self.update(status=stage, message=message)
 
     def mark_ready(self, output_path: Path, message: str | None = None) -> None:
         self.output_path = output_path
@@ -79,3 +77,32 @@ class Job:
     ) -> None:
         self.error = JobError(error_type, detail)
         self.update(status=JobStatus.FAILED, progress=1.0, message=message)
+
+    def advance_stage(self, stage: JobStatus, fraction: float) -> None:
+        start = self._stage_start(stage)
+        end = STAGE_PROGRESS.get(stage, start)
+        clamped_fraction = max(0.0, min(fraction, 1.0))
+        progress = start + (end - start) * clamped_fraction
+        self.update(progress=progress)
+
+    def complete_stage(self, stage: JobStatus) -> None:
+        self.update(progress=STAGE_PROGRESS.get(stage, self.progress))
+
+    def _stage_start(self, stage: JobStatus) -> float:
+        ordered = [
+            JobStatus.QUEUED,
+            JobStatus.VALIDATING,
+            JobStatus.RENDERING,
+            JobStatus.DETECTING,
+            JobStatus.WRITING,
+            JobStatus.READY,
+            JobStatus.FAILED,
+        ]
+        try:
+            idx = ordered.index(stage)
+        except ValueError:
+            return self.progress
+        if idx == 0:
+            return 0.0
+        previous = ordered[idx - 1]
+        return STAGE_PROGRESS.get(previous, self.progress)

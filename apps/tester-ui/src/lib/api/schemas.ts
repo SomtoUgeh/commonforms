@@ -22,7 +22,7 @@ export const JobStatusSchema = z.enum([
 // Job Error
 export const JobErrorSchema = z.object({
   type: z.string(),
-  detail: z.string(),
+  detail: z.string().nullable().optional(),
 });
 
 // Job Create Response

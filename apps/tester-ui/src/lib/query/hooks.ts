@@ -20,10 +20,9 @@ export function useCreateJob() {
       options?: JobOptions;
       baseUrl?: string;
     }) => createJob(file, options, baseUrl),
-    onSuccess: () => {
-      // Invalidate job list queries
+    onSuccess: (job) => {
+      queryClient.setQueryData(jobKeys.status(job.job_id), job);
       queryClient.invalidateQueries({ queryKey: jobKeys.lists() });
-      // Don't set initial cache - let useJobStatus fetch fresh data
     },
   });
 }
@@ -32,7 +31,13 @@ export function useCreateJob() {
  * Hook for polling job status
  * Automatically stops polling when job reaches terminal state
  */
-export function useJobStatus(jobId: string | null, baseUrl?: string) {
+export function useJobStatus(
+  jobId: string | null,
+  baseUrl?: string,
+  pollIntervalMs: number = POLL_INTERVAL_MS
+) {
+  const interval = pollIntervalMs > 0 ? pollIntervalMs : POLL_INTERVAL_MS;
+
   return useQuery({
     queryKey: jobKeys.status(jobId || ""),
     queryFn: () => {
@@ -48,7 +53,7 @@ export function useJobStatus(jobId: string | null, baseUrl?: string) {
       if (data?.status === "ready" || data?.status === "failed") {
         return false;
       }
-      return POLL_INTERVAL_MS;
+      return interval;
     },
   });
 }

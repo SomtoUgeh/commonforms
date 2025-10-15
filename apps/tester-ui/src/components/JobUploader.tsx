@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MAX_FILE_SIZE_MB } from "@/constants/validation";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import type { JobOptions } from "@/lib/api/schemas";
 import { useCreateJob } from "@/lib/query/hooks";
@@ -94,7 +95,7 @@ export function JobUploader({ onJobCreated }: JobUploaderProps) {
                   : "Drag & drop PDF or click to browse"}
               </p>
               <p className="text-muted-foreground text-xs">
-                Maximum file size: 50 MB
+                Maximum file size: {MAX_FILE_SIZE_MB} MB
               </p>
             </div>
           </div>

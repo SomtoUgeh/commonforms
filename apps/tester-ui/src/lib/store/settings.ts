@@ -10,7 +10,7 @@ type SettingsState = {
   reset: () => void;
 };
 
-const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS = {
   backendUrl: DEFAULT_BACKEND_URL,
   pollInterval: POLL_INTERVAL_MS,
 };

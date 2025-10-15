@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSettings } from "@/lib/store/settings";
+import { DEFAULT_SETTINGS, useSettings } from "@/lib/store/settings";
 import { validateBackendUrl, validatePollInterval } from "@/utils/validation";
 
 export function SettingsPanel() {
@@ -52,8 +52,8 @@ export function SettingsPanel() {
 
   const handleReset = () => {
     reset();
-    setLocalUrl(backendUrl);
-    setLocalInterval(pollInterval.toString());
+    setLocalUrl(DEFAULT_SETTINGS.backendUrl);
+    setLocalInterval(DEFAULT_SETTINGS.pollInterval.toString());
     toast.success("Settings reset to defaults");
   };
 

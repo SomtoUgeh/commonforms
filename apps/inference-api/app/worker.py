@@ -4,7 +4,7 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-from typing import Dict
+from typing import Dict, TypedDict
 
 import formalpdf
 import pypdfium2
@@ -21,6 +21,18 @@ from .storage import JobPaths, StorageManager
 logger = logging.getLogger(__name__)
 
 TERMINAL_STATUSES = {JobStatus.READY, JobStatus.FAILED}
+
+
+class MergedOptions(TypedDict):
+    """Type for merged processing options."""
+
+    model_or_path: str
+    device: str | int
+    fast: bool
+    keep_existing_fields: bool
+    use_signature_fields: bool
+    confidence: float
+    image_size: int
 
 
 class JobManager:
@@ -130,6 +142,7 @@ class JobProcessor:
         job.mark_stage(JobStatus.VALIDATING, "Validating input PDF")
         self._touch(paths.base_dir)
         self._validate_pdf(paths.input_path)
+        job.complete_stage(JobStatus.VALIDATING)
 
         job.mark_stage(JobStatus.RENDERING, "Rendering PDF pages")
         self._touch(paths.base_dir)
@@ -141,6 +154,8 @@ class JobProcessor:
         except pypdfium2._helpers.misc.PdfiumError as exc:  # type: ignore[attr-defined]
             job.mark_failed("PdfiumError", str(exc))
             raise
+        else:
+            job.complete_stage(JobStatus.RENDERING)
 
         job.mark_stage(JobStatus.DETECTING, "Running field detection")
         self._touch(paths.base_dir)
@@ -154,6 +169,7 @@ class JobProcessor:
             confidence=merged_options["confidence"],
             image_size=merged_options["image_size"],
         )
+        job.complete_stage(JobStatus.DETECTING)
 
         job.mark_stage(JobStatus.WRITING, "Writing fillable PDF")
         self._touch(paths.base_dir)
@@ -161,6 +177,9 @@ class JobProcessor:
         try:
             if not merged_options["keep_existing_fields"]:
                 writer.clear_existing_fields()
+
+            total_widgets = sum(len(page_widgets) for page_widgets in widgets.values())
+            processed_widgets = 0
 
             for page_ix, page_widgets in widgets.items():
                 for i, widget in enumerate(page_widgets):
@@ -175,10 +194,16 @@ class JobProcessor:
                         else:
                             writer.add_text_box(name, page_ix, widget.bounding_box)
 
+                    processed_widgets += 1
+                    if total_widgets > 0:
+                        fraction = processed_widgets / total_widgets
+                        job.advance_stage(JobStatus.WRITING, fraction)
+
             writer.save(str(paths.output_path))
         finally:
             writer.close()
 
+        job.complete_stage(JobStatus.WRITING)
         job.mark_ready(paths.output_path, "PDF ready for download")
         self._touch(paths.base_dir)
 
@@ -195,8 +220,8 @@ class JobProcessor:
         else:
             doc.document.close()
 
-    def _merge_options(self, options: PrepareOptions | None) -> dict[str, object]:
-        merged = {
+    def _merge_options(self, options: PrepareOptions | None) -> MergedOptions:
+        merged: MergedOptions = {
             "model_or_path": settings.default_model,
             "device": settings.device,
             "fast": settings.fast_mode,
@@ -207,7 +232,7 @@ class JobProcessor:
         }
         if options:
             for key, value in options.model_dump(exclude_none=True).items():
-                merged[key] = value
+                merged[key] = value  # type: ignore[literal-required]
         return merged
 
     def _touch(self, path: Path) -> None:
