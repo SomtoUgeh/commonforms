@@ -9,26 +9,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install uv for fast package management
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:${PATH}"
+ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
-# Copy dependency files first (for better caching)
+# Copy all files needed for installation
 COPY pyproject.toml uv.lock ./
-COPY packages/commonforms-core/pyproject.toml packages/commonforms-core/
-COPY apps/inference-api/pyproject.toml apps/inference-api/
+COPY packages packages
+COPY apps/inference-api apps/inference-api
 
 # Install dependencies
 RUN uv sync --frozen --no-dev
 
-# Copy source code and models
-COPY packages packages
-COPY apps/inference-api apps/inference-api
-
 # Runtime stage
 FROM python:3.11-slim
 
-# Install runtime dependencies for PDF processing
+# Install runtime dependencies for PDF processing and OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libsm6 \
@@ -36,6 +32,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     libgomp1 \
     libjpeg62-turbo \
+    libgl1 \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
