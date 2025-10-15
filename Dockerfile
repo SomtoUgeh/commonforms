@@ -48,10 +48,10 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH="/app/.venv/bin:${PATH}"
 ENV PYTHONPATH="/app"
 
-# Railway provides PORT env var
+# Fly.io provides PORT env var
 EXPOSE ${PORT:-8000}
 
-# Use Railway's PORT variable
+# Use Fly.io's PORT variable
 CMD uvicorn app.main:app \
     --host 0.0.0.0 \
     --port ${PORT:-8000} \

@@ -54,6 +54,11 @@ if settings.cors_origins:
 app.include_router(create_router(job_manager))
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+
 async def _cleanup_loop() -> None:
     ttl = settings.cleanup_ttl_seconds
     interval = max(5, settings.cleanup_interval_seconds)
